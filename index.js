@@ -123,6 +123,10 @@ module.exports.validate = function (service, receipt, cb) {
 		});
 	}
 
+	if (!service) {
+		service = module.exports.getService(receipt);
+	}
+
 	if (service === module.exports.UNITY) {
 		service = getServiceFromUnityReceipt(receipt);
 		receipt = parseUnityReceipt(receipt);
