@@ -17,12 +17,7 @@ var amazon;
 function handlePromisedFunctionCb(resolve, reject) {
 	return function _handlePromisedCallback(error, response) {
 		if (error) {
-			var errorData = { error: error, status: null, message: null };
-			if (response !== null && typeof response === 'object') {
-				errorData.status = response.status;
-				errorData.message = response.message;
-			}
-			return reject(JSON.stringify(errorData));
+			return reject(JSON.stringify(error));
 		}
 		return resolve(response);
 	};
@@ -115,19 +110,19 @@ module.exports.validate = function (service, receipt, cb) {
 		// we are given 2 arguemnts as: .validate(receipt, cb)
 		cb = receipt;
 		receipt = service;
-		service = module.exports.getService(receipt); 
+		service = module.exports.getService(receipt);
 	}
 	if (!cb && Promise) {
 		return new Promise(function (resolve, reject) {
 			module.exports.validate(service, receipt, handlePromisedFunctionCb(resolve, reject));
 		});
 	}
-	
+
 	if (service === module.exports.UNITY) {
 		service = getServiceFromUnityReceipt(receipt);
 		receipt = parseUnityReceipt(receipt);
 	}
-		
+
 	switch (service) {
 		case module.exports.APPLE:
 			apple.validatePurchase(null, receipt, cb);
@@ -159,9 +154,9 @@ module.exports.validateOnce = function (service, secretOrPubKey, receipt, cb) {
 		// we are given 3 arguemnts as: .validateOnce(receipt, secretPubKey, cb)
 		cb = receipt;
 		receipt = service;
-		service = module.exports.getService(receipt); 
+		service = module.exports.getService(receipt);
 	}
-	
+
 	if (!cb && Promise) {
 		return new Promise(function (resolve, reject) {
 			module.exports.validateOnce(service, secretOrPubKey, receipt, handlePromisedFunctionCb(resolve, reject));
@@ -172,12 +167,12 @@ module.exports.validateOnce = function (service, secretOrPubKey, receipt, cb) {
 		service = getServiceFromUnityReceipt(receipt);
 		receipt = parseUnityReceipt(receipt);
 	}
-	
+
 	if (!secretOrPubKey && service !== module.exports.APPLE && service !== module.exports.WINDOWS) {
 		verbose.log('<.validateOnce>', service, receipt);
 		return cb(new Error('missing secret or public key for dynamic validation:' + service));
 	}
-	
+
 	switch (service) {
 		case module.exports.APPLE:
 			apple.validatePurchase(secretOrPubKey, receipt, cb);
@@ -258,7 +253,7 @@ module.exports.refreshGoogleToken = function (cb) {
 
 module.exports.setAmazonValidationHost = function (vhost) {
 	if (amazon.setValidationHost) {
-		return amazon.setValidationHost(vhost);	
+		return amazon.setValidationHost(vhost);
 	}
 	return false;
 };
