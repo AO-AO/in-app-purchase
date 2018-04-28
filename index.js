@@ -22,7 +22,7 @@ function handlePromisedFunctionCb(resolve, reject) {
 				errorData.status = response.status;
 				errorData.message = response.message;
 			}
-			return reject(JSON.stringify(errorData));
+			return reject(errorData);
 		}
 		return resolve(response);
 	};
@@ -121,6 +121,10 @@ module.exports.validate = function (service, receipt, cb) {
 		return new Promise(function (resolve, reject) {
 			module.exports.validate(service, receipt, handlePromisedFunctionCb(resolve, reject));
 		});
+	}
+
+	if (!service) {
+		service = module.exports.getService(receipt);
 	}
 
 	if (service === module.exports.UNITY) {
